@@ -107,24 +107,16 @@ impl ReferralRegistryContract {
         Self::is_paused(env)
     }
 
+    /// Deprecated alias for `set_paused(env, admin, true)`.
+    /// The canonical pause toggle is `set_paused`.
     pub fn pause(env: Env, admin: Address) -> Result<(), ReferralError> {
-        Self::require_admin(&env, &admin)?;
-        admin.require_auth();
-        env.storage().instance().set(&DataKey::Paused, &true);
-        env.storage().instance().extend_ttl(TTL_BUMP, TTL_HIGH);
-        env.events()
-            .publish((Symbol::new(&env, "paused"), admin), true);
-        Ok(())
+        Self::set_paused(env, admin, true)
     }
 
+    /// Deprecated alias for `set_paused(env, admin, false)`.
+    /// The canonical pause toggle is `set_paused`.
     pub fn unpause(env: Env, admin: Address) -> Result<(), ReferralError> {
-        Self::require_admin(&env, &admin)?;
-        admin.require_auth();
-        env.storage().instance().set(&DataKey::Paused, &false);
-        env.storage().instance().extend_ttl(TTL_BUMP, TTL_HIGH);
-        env.events()
-            .publish((Symbol::new(&env, "unpaused"), admin), true);
-        Ok(())
+        Self::set_paused(env, admin, false)
     }
 
     pub fn is_paused(env: Env) -> bool {
