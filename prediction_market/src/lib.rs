@@ -756,24 +756,16 @@ impl PredictionMarketContract {
     // users' emergency exit from a cancelled market, and cancelling a pending
     // withdrawal request is itself a safety action the admin needs.
 
+    /// Deprecated alias for `set_paused(env, admin, true)`.
+    /// The canonical pause toggle is `set_paused`.
     pub fn pause(env: Env, admin: Address) -> Result<(), MarketError> {
-        Self::require_admin(&env, &admin)?;
-        admin.require_auth();
-        env.storage().instance().set(&DataKey::Paused, &true);
-        env.storage().instance().extend_ttl(TTL_BUMP, TTL_HIGH);
-        env.events()
-            .publish((Symbol::new(&env, "paused"), admin), true);
-        Ok(())
+        Self::set_paused(env, admin, true)
     }
 
+    /// Deprecated alias for `set_paused(env, admin, false)`.
+    /// The canonical pause toggle is `set_paused`.
     pub fn unpause(env: Env, admin: Address) -> Result<(), MarketError> {
-        Self::require_admin(&env, &admin)?;
-        admin.require_auth();
-        env.storage().instance().set(&DataKey::Paused, &false);
-        env.storage().instance().extend_ttl(TTL_BUMP, TTL_HIGH);
-        env.events()
-            .publish((Symbol::new(&env, "unpaused"), admin), true);
-        Ok(())
+        Self::set_paused(env, admin, false)
     }
 
     pub fn is_paused(env: Env) -> bool {
@@ -993,6 +985,7 @@ impl PredictionMarketContract {
         let is_increase = existing.is_some();
 
         // ── Exact fee decomposition (net + platform + referral == amount) ──
+        let net = amount * NET_NUMERATOR / BPS_DENOM;
         let total_fee = amount - net;
         let platform_fee = amount * PLATFORM_FEE_BPS / BPS_DENOM;
         let referral_fee = total_fee - platform_fee;
