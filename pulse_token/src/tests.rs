@@ -917,3 +917,33 @@ fn test_supply_cap_balance_unchanged_on_reject() {
     assert!(client.try_mint(&minter, &alice, &1_0000000_i128).is_err());
     assert_eq!(client.balance(&alice), balance_before); // no state corruption
 }
+
+#[test]
+fn test_canonical_pause_consolidation_and_aliases() {
+    let env = Env::default();
+    env.mock_all_auths();
+    let client = setup(&env);
+    let admin = init(&env, &client);
+
+    assert!(!client.is_paused());
+    assert!(!client.paused());
+
+    // Canonical toggle: set_paused writes DataKey::Paused
+    client.set_paused(&admin, &true);
+    assert!(client.is_paused());
+    assert!(client.paused());
+
+    // Alias toggle: unpause delegates to set_paused
+    client.unpause(&admin);
+    assert!(!client.is_paused());
+    assert!(!client.paused());
+
+    // Alias toggle: pause delegates to set_paused
+    client.pause(&admin);
+    assert!(client.is_paused());
+    assert!(client.paused());
+
+    client.set_paused(&admin, &false);
+    assert!(!client.is_paused());
+    assert!(!client.paused());
+}

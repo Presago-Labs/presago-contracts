@@ -147,34 +147,16 @@ impl PULSETokenContract {
             .unwrap_or(0)
     }
 
-    /// Halt mint/transfer/burn in an emergency. Admin only. View functions
-    /// (balance, total_supply, ...) keep working so integrators can still
-    /// read state while the contract is paused.
+    /// Deprecated alias for `set_paused(env, admin, true)`.
+    /// The canonical pause toggle is `set_paused`.
     pub fn pause(env: Env, admin: Address) -> Result<(), TokenError> {
-        let stored = Self::require_admin(&env)?;
-        if admin != stored {
-            return Err(TokenError::NotAdmin);
-        }
-        admin.require_auth();
-        env.storage().instance().set(&DataKey::Paused, &true);
-        Self::bump_instance_ttl(&env);
-        env.events()
-            .publish((Symbol::new(&env, "paused"), admin), true);
-        Ok(())
+        Self::set_paused(env, admin, true)
     }
 
-    /// Resume mint/transfer/burn. Admin only.
+    /// Deprecated alias for `set_paused(env, admin, false)`.
+    /// The canonical pause toggle is `set_paused`.
     pub fn unpause(env: Env, admin: Address) -> Result<(), TokenError> {
-        let stored = Self::require_admin(&env)?;
-        if admin != stored {
-            return Err(TokenError::NotAdmin);
-        }
-        admin.require_auth();
-        env.storage().instance().set(&DataKey::Paused, &false);
-        Self::bump_instance_ttl(&env);
-        env.events()
-            .publish((Symbol::new(&env, "unpaused"), admin), true);
-        Ok(())
+        Self::set_paused(env, admin, false)
     }
 
     pub fn is_paused(env: Env) -> bool {
