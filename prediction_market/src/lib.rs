@@ -993,7 +993,6 @@ impl PredictionMarketContract {
         let is_increase = existing.is_some();
 
         // ── Exact fee decomposition (net + platform + referral == amount) ──
-        let net = amount * NET_NUMERATOR / BPS_DENOM;
         let total_fee = amount - net;
         let platform_fee = amount * PLATFORM_FEE_BPS / BPS_DENOM;
         let referral_fee = total_fee - platform_fee;
