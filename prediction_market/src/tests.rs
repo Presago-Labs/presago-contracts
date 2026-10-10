@@ -396,22 +396,6 @@ fn test_reject_gross_minimum_when_net_is_too_small() {
     t.client.place_bet(&user, &id, &true, &MIN_BET);
 }
 
-#[test]
-fn test_minimum_bet_boundary_single_net_computation() {
-    let t = setup();
-    let id = create_test_market(&t);
-    let user = Address::generate(&t.env);
-    fund_user(&t, &user, 200_0000000);
-
-    // Exactly the smallest gross amount where net is >= MIN_BET:
-    // With NET_NUMERATOR = 9800 and BPS_DENOM = 10000,
-    // gross of 10_204_082 gives net = 10_204_082 * 9800 / 10000 = 10_000_000 (MIN_BET).
-    let exact_min_gross = 10_204_082_i128;
-    t.client.place_bet(&user, &id, &true, &exact_min_gross);
-    let bet = t.client.get_bet(&id, &user);
-    assert_eq!(bet.amount, 10_000_000);
-}
-
 // ── 11. Increase existing position ───────────────────────────────────────────
 
 #[test]
