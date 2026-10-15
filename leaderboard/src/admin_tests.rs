@@ -624,7 +624,7 @@ fn test_repair_top_index_survives_many_sequential_removals() {
         assert_eq!(client.get_rank(&user), UNRANKED_RANK);
         // After the 50th removal the list is empty and the min cache is reset.
         if idx < 49 {
-            assert_eq!(client.get_top_player_count(), 49 - idx as u32);
+            assert_eq!(client.get_top_player_count(), 49 - idx);
         }
     }
     assert_eq!(client.get_top_player_count(), 0);
