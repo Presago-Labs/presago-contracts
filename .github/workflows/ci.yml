@@ -8,9 +8,6 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  RUSTFLAGS: "-D warnings"
-  SOROBAN_RPC_URL: https://soroban-testnet.stellar.org
-  SOROBAN_NETWORK_PASSPHRASE: Test SDF Future Network ; October 2022
 
 jobs:
   check:
