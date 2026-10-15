@@ -92,7 +92,29 @@ jobs:
           restore-keys: cargo-${{ runner.os }}-
 
       - name: Build WASM
-        run: cargo build --release --target wasm32v1-none -p prediction_market
+        run: cargo build --release --target wasm32v1-none -p prediction_market -p pulse_token -p leaderboard -p referral_registry
+
+      - name: Check WASM size budget
+        run: |
+          # Soroban network max_contract_size_bytes is 128 KiB (131072 bytes).
+          # Enforce a 96 KiB (98304 bytes) budget (~10% headroom above prediction_market.wasm at ~89.5 KB)
+          # so any size regression or accidental LTO/strip removal fails CI immediately.
+          BUDGET_BYTES=98304
+          failed=0
+          for contract in prediction_market pulse_token leaderboard referral_registry; do
+            wasm="target/wasm32v1-none/release/${contract}.wasm"
+            if [ ! -f "$wasm" ]; then
+              echo "::error::WASM binary not found at $wasm"
+              exit 1
+            fi
+            size=$(wc -c < "$wasm" | tr -d ' ')
+            echo "${contract}.wasm: ${size} bytes (budget: ${BUDGET_BYTES} bytes)"
+            if [ "$size" -gt "$BUDGET_BYTES" ]; then
+              echo "::error::${contract}.wasm (${size} bytes) exceeds WASM size budget (${BUDGET_BYTES} bytes)"
+              failed=1
+            fi
+          done
+          exit $failed
 
   invariants:
     name: Cross-Contract Invariants
