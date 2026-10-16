@@ -447,7 +447,7 @@ fn test_reduce_position_partial_no_referrer() {
     let t = setup();
     let id = create_test_market(&t);
     let user = Address::generate(&t.env);
-    fund_user(&t, &user, 10_000_0000000);
+    fund_user(&t, &user, 100_000_000_000);
 
     t.client.place_bet(&user, &id, &true, &100_0000000_i128); // 100 XLM
     assert_eq!(t.client.get_market(&id).total_yes, 98_0000000);
@@ -461,7 +461,7 @@ fn test_reduce_position_partial_no_referrer() {
     assert_eq!(t.client.get_bet_gross(&id, &user), 60_0000000);
     assert_eq!(t.client.get_bet(&id, &user).amount, 58_8000000); // 98 - 39.2
     assert_eq!(t.client.get_market(&id).total_yes, 58_8000000);
-    assert_eq!(t.client.get_accumulated_fees(), 0_9000000); // 1.5 - 0.6
+    assert_eq!(t.client.get_accumulated_fees(), 9_000_000); // 1.5 - 0.6
     assert_eq!(t.client.get_user_bet_count(&id, &user), 1); // not a new bet
 }
 
@@ -473,7 +473,7 @@ fn test_reduce_position_with_referrer_paid() {
     let id = create_test_market(&t);
     let user = Address::generate(&t.env);
     let referrer = Address::generate(&t.env);
-    fund_user(&t, &user, 1_000_0000000);
+    fund_user(&t, &user, 10_000_000_000);
 
     let no_ref: Option<Address> = None;
     t.referral_client
@@ -500,7 +500,7 @@ fn test_reduce_position_full_close_deletes_position() {
     let t = setup();
     let id = create_test_market(&t);
     let user = Address::generate(&t.env);
-    fund_user(&t, &user, 1_000_0000000);
+    fund_user(&t, &user, 10_000_000_000);
 
     t.client.place_bet(&user, &id, &true, &100_0000000_i128);
     let refund = t.client.reduce_position(&user, &id, &100_0000000_i128);
@@ -526,8 +526,8 @@ fn test_reduce_position_keeps_resolution_exact() {
     let id = create_test_market(&t);
     let alice = Address::generate(&t.env);
     let bob = Address::generate(&t.env);
-    fund_user(&t, &alice, 10_000_0000000);
-    fund_user(&t, &bob, 10_000_0000000);
+    fund_user(&t, &alice, 100_000_000_000);
+    fund_user(&t, &bob, 100_000_000_000);
 
     t.client.place_bet(&alice, &id, &true, &100_0000000_i128); // net 98
     t.client.place_bet(&bob, &id, &false, &100_0000000_i128); // net 98
@@ -558,7 +558,7 @@ fn test_reduce_then_cancel_refund_pays_remaining_gross() {
     let t = setup();
     let id = create_test_market(&t);
     let user = Address::generate(&t.env);
-    fund_user(&t, &user, 10_000_0000000);
+    fund_user(&t, &user, 100_000_000_000);
 
     t.client.place_bet(&user, &id, &true, &100_0000000_i128);
     let reduced = t.client.reduce_position(&user, &id, &40_0000000_i128);
@@ -587,7 +587,7 @@ fn test_reduce_position_rejects_over_amount() {
     let t = setup();
     let id = create_test_market(&t);
     let user = Address::generate(&t.env);
-    fund_user(&t, &user, 1_000_0000000);
+    fund_user(&t, &user, 10_000_000_000);
     t.client.place_bet(&user, &id, &true, &100_0000000_i128);
     t.client.reduce_position(&user, &id, &100_0000001_i128);
 }
@@ -598,7 +598,7 @@ fn test_reduce_position_rejects_zero_amount() {
     let t = setup();
     let id = create_test_market(&t);
     let user = Address::generate(&t.env);
-    fund_user(&t, &user, 1_000_0000000);
+    fund_user(&t, &user, 10_000_000_000);
     t.client.place_bet(&user, &id, &true, &100_0000000_i128);
     t.client.reduce_position(&user, &id, &0_i128);
 }
@@ -619,8 +619,8 @@ fn test_reduce_position_rejects_resolved_market() {
     let id = create_test_market(&t);
     let user = Address::generate(&t.env);
     let other = Address::generate(&t.env);
-    fund_user(&t, &user, 1_000_0000000);
-    fund_user(&t, &other, 1_000_0000000);
+    fund_user(&t, &user, 10_000_000_000);
+    fund_user(&t, &other, 10_000_000_000);
     t.client.place_bet(&user, &id, &true, &100_0000000_i128);
     t.client.place_bet(&other, &id, &false, &100_0000000_i128);
     advance_time(&t.env, 3601);
@@ -634,7 +634,7 @@ fn test_reduce_position_rejects_cancelled_market() {
     let t = setup();
     let id = create_test_market(&t);
     let user = Address::generate(&t.env);
-    fund_user(&t, &user, 1_000_0000000);
+    fund_user(&t, &user, 10_000_000_000);
     t.client.place_bet(&user, &id, &true, &100_0000000_i128);
     t.client.cancel_market(&t.admin, &id);
     t.client.reduce_position(&user, &id, &10_0000000_i128);
@@ -646,7 +646,7 @@ fn test_reduce_position_rejects_expired_market() {
     let t = setup();
     let id = create_test_market(&t);
     let user = Address::generate(&t.env);
-    fund_user(&t, &user, 1_000_0000000);
+    fund_user(&t, &user, 10_000_000_000);
     t.client.place_bet(&user, &id, &true, &100_0000000_i128);
     advance_time(&t.env, 3601);
     t.client.reduce_position(&user, &id, &10_0000000_i128);
@@ -2103,7 +2103,7 @@ fn test_reject_unregistered_referrer_e2e() {
     let t = setup();
     let user = Address::generate(&t.env);
     let attacker = Address::generate(&t.env);
-    fund_user(&t, &user, 1_000_0000000);
+    fund_user(&t, &user, 10_000_000_000);
 
     // Attacker never registers; naming them as referrer must fail with
     // referral_registry::ReferralError::InvalidReferrer, at registration
@@ -2122,7 +2122,7 @@ fn test_referral_fee_flow_registered_referrer() {
     let id = create_test_market(&t);
     let user = Address::generate(&t.env);
     let referrer = Address::generate(&t.env);
-    fund_user(&t, &user, 1_000_0000000);
+    fund_user(&t, &user, 10_000_000_000);
 
     // Referrer registers first (their welcome bonus is +5 pts), then user.
     t.referral_client
@@ -2149,7 +2149,7 @@ fn test_referral_still_works_after_registered_referrer() {
     let id = create_test_market(&t);
     let user = Address::generate(&t.env);
     let referrer = Address::generate(&t.env);
-    fund_user(&t, &user, 1_000_0000000);
+    fund_user(&t, &user, 10_000_000_000);
 
     t.referral_client
         .register_referral(&referrer, &String::from_str(&t.env, "Ref"), &None);
@@ -2254,16 +2254,16 @@ fn test_payout_invariant_holds_through_partial_claims() {
     let w1 = Address::generate(&t.env);
     let w2 = Address::generate(&t.env);
     let w3 = Address::generate(&t.env);
-    fund_user(&t, &w1, 1_000_0000000);
-    fund_user(&t, &w2, 1_000_0000000);
-    fund_user(&t, &w3, 1_000_0000000);
+    fund_user(&t, &w1, 10_000_000_000);
+    fund_user(&t, &w2, 10_000_000_000);
+    fund_user(&t, &w3, 10_000_000_000);
 
     // Deliberately uneven stakes that do not divide the pool evenly.
     t.client.place_bet(&w1, &id, &true, &10_300_007_i128); // net clears MIN_BET
     t.client.place_bet(&w2, &id, &true, &20_000_011_i128);
     t.client.place_bet(&w3, &id, &true, &30_000_013_i128);
     let loser = Address::generate(&t.env);
-    fund_user(&t, &loser, 1_000_0000000);
+    fund_user(&t, &loser, 10_000_000_000);
     t.client.place_bet(&loser, &id, &false, &33_333_333_i128);
 
     advance_time(&t.env, 3601);
@@ -2331,8 +2331,8 @@ fn test_hedged_position_payout_uses_winning_side_net_only() {
 
     let hedger = Address::generate(&t.env);
     let pure_winner = Address::generate(&t.env);
-    fund_user(&t, &hedger, 1_000_0000000);
-    fund_user(&t, &pure_winner, 1_000_0000000);
+    fund_user(&t, &hedger, 10_000_000_000);
+    fund_user(&t, &pure_winner, 10_000_000_000);
 
     t.client.place_bet(&hedger, &id, &true, &60_0000000_i128);
     t.client.place_bet(&hedger, &id, &false, &40_0000000_i128); // hedge
@@ -4395,8 +4395,9 @@ fn test_inv_leaderboard_points_conservation() {
 fn test_inv_withdraw_cap_exceeds_fee_rate() {
     // Compile-time invariant: MAX_WITHDRAWAL_BPS (2000) > TOTAL_FEE_BPS (200)
     // This ensures the cap doesn't prevent normal fee withdrawal.
+    let max_withdrawal_bps = core::hint::black_box(MAX_WITHDRAWAL_BPS);
     assert!(
-        MAX_WITHDRAWAL_BPS > TOTAL_FEE_BPS,
+        max_withdrawal_bps > TOTAL_FEE_BPS,
         "withdrawal cap must exceed fee rate"
     );
 
@@ -4756,10 +4757,10 @@ fn test_inv_withdraw_cap_scales_with_market_count() {
 
     let mut ids: Vec<u64> = Vec::new(&t.env);
     let market_names = ["Market 0", "Market 1", "Market 2", "Market 3", "Market 4"];
-    for i in 0..5 {
+    for market_name in &market_names {
         let id = t.client.create_market(
             &t.admin,
-            &String::from_str(&t.env, market_names[i]),
+            &String::from_str(&t.env, market_name),
             &String::from_str(&t.env, "https://m.png"),
             &Category::Other,
             &3600_u64,
