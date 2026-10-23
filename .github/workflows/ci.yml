@@ -93,6 +93,8 @@ jobs:
 
       - name: Build WASM
         run: cargo build --release --target wasm32v1-none -p prediction_market
+      - name: Check WASM size budget
+        run: bash scripts/check-wasm-size.sh
 
   invariants:
     name: Cross-Contract Invariants
