@@ -157,7 +157,7 @@ fn test_credit_with_referrer_pays_referrer() {
     let referrer_balance_before = t.xlm.balance(&referrer);
 
     let paid = t.client.credit(&t.market, &user, &referral_fee);
-    assert_eq!(paid, true);
+    assert!(paid);
 
     assert_eq!(
         t.xlm.balance(&referrer),
@@ -181,7 +181,7 @@ fn test_credit_without_referrer_returns_to_bettor() {
     let user_balance_before = t.xlm.balance(&user);
 
     let paid = t.client.credit(&t.market, &user, &referral_fee);
-    assert_eq!(paid, false);
+    assert!(!paid);
 
     assert_eq!(t.xlm.balance(&user), user_balance_before + referral_fee);
 }
