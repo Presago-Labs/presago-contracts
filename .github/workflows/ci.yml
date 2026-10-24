@@ -13,6 +13,14 @@ env:
   SOROBAN_NETWORK_PASSPHRASE: Test SDF Future Network ; October 2022
 
 jobs:
+  wasm-size-tests:
+    name: WASM size gate tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test WASM size gate
+        run: python3 -m unittest discover -s scripts -p 'test_check_wasm_size.py' -v
+
   check:
     name: Check & Clippy
     runs-on: ubuntu-latest
@@ -93,6 +101,15 @@ jobs:
 
       - name: Build WASM
         run: cargo build --release --target wasm32v1-none -p prediction_market
+
+      # Budget: 96 KiB (98,304 bytes). Actual release baseline: 89,469 bytes
+      # in CI run 40087703845 on the deduplicated main contract source.
+      # This leaves 8,835 bytes (~9.9%) growth headroom and fails the job
+      # if the final wasm32v1-none release artifact grows beyond the budget.
+      # This is a project regression gate, stricter than the 128 KiB
+      # network-configured deployment ceiling.
+      - name: Enforce WASM size budget
+        run: python3 scripts/check_wasm_size.py
 
   invariants:
     name: Cross-Contract Invariants
