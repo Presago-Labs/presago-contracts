@@ -631,7 +631,7 @@ fn test_transfer_extends_ttl_on_both_balance_keys() {
 
     let alice = Address::generate(&env);
     let bob = Address::generate(&env);
-    mint_to(&client, &env, &alice, 10_000_0000000_i128);
+    mint_to(&client, &env, &alice, 100_000_000_000_i128);
     // Give bob an entry too, so we are measuring an extension and not a
     // first-time write.
     mint_to(&client, &env, &bob, 1_0000000_i128);
@@ -668,7 +668,7 @@ fn test_burn_extends_ttl_on_remaining_balance() {
     let _admin = init(&env, &client);
 
     let alice = Address::generate(&env);
-    mint_to(&client, &env, &alice, 10_000_0000000_i128);
+    mint_to(&client, &env, &alice, 100_000_000_000_i128);
     advance_ledgers(&env, 4_000_000);
 
     let before = balance_ttl(&env, &client.address, &alice);
@@ -679,14 +679,14 @@ fn test_burn_extends_ttl_on_remaining_balance() {
 
     // A partial burn leaves a live balance behind — that remainder needs its
     // TTL refreshed just as much as a transfer's does.
-    client.burn(&alice, &1_000_0000000_i128);
+    client.burn(&alice, &10_000_000_000_i128);
 
     let after = balance_ttl(&env, &client.address, &alice);
     assert!(
         after > before && after >= TTL_BUMP,
         "burn did not extend the remaining balance's TTL ({before} -> {after})"
     );
-    assert_eq!(client.balance(&alice), 9_000_0000000_i128);
+    assert_eq!(client.balance(&alice), 90_000_000_000_i128);
 }
 
 #[test]
@@ -698,7 +698,7 @@ fn test_transfer_from_extends_ttl_on_both_balance_keys() {
     let alice = Address::generate(&env);
     let bob = Address::generate(&env);
     let spender = Address::generate(&env);
-    mint_to(&client, &env, &alice, 10_000_0000000_i128);
+    mint_to(&client, &env, &alice, 100_000_000_000_i128);
     mint_to(&client, &env, &bob, 1_0000000_i128);
 
     advance_ledgers(&env, 4_000_000);
@@ -706,7 +706,7 @@ fn test_transfer_from_extends_ttl_on_both_balance_keys() {
     client.approve(
         &alice,
         &spender,
-        &1_000_0000000_i128,
+        &10_000_000_000_i128,
         &(env.ledger().sequence() + 1_000),
     );
 
@@ -768,8 +768,8 @@ fn test_balance_survives_beyond_original_ttl_and_supply_stays_consistent() {
 
     let alice = Address::generate(&env);
     let bob = Address::generate(&env);
-    mint_to(&client, &env, &alice, 10_000_0000000_i128);
-    mint_to(&client, &env, &bob, 10_000_0000000_i128);
+    mint_to(&client, &env, &alice, 100_000_000_000_i128);
+    mint_to(&client, &env, &bob, 100_000_000_000_i128);
 
     let original_ttl = balance_ttl(&env, &client.address, &alice);
 
@@ -784,8 +784,8 @@ fn test_balance_survives_beyond_original_ttl_and_supply_stays_consistent() {
     }
 
     // Balances intact...
-    assert_eq!(client.balance(&alice), 10_000_0000000_i128);
-    assert_eq!(client.balance(&bob), 10_000_0000000_i128);
+    assert_eq!(client.balance(&alice), 100_000_000_000_i128);
+    assert_eq!(client.balance(&bob), 100_000_000_000_i128);
     // ...and the token's core invariant still holds.
     assert_eq!(
         client.total_supply(),
@@ -814,8 +814,8 @@ fn test_supply_cap_default_unlimited() {
 
     // Default cap is 0 (unlimited) — minting should work.
     assert_eq!(client.get_supply_cap(), 0);
-    client.mint(&minter, &alice, &1_000_0000000_i128);
-    assert_eq!(client.total_supply(), 1_000_0000000_i128);
+    client.mint(&minter, &alice, &10_000_000_000_i128);
+    assert_eq!(client.total_supply(), 10_000_000_000_i128);
 }
 
 #[test]
@@ -895,7 +895,7 @@ fn test_set_supply_cap_requires_admin() {
     let rando = Address::generate(&env);
 
     // Non-admin must fail with NotAdmin.
-    client.set_supply_cap(&rando, &1_000_0000000_i128);
+    client.set_supply_cap(&rando, &10_000_000_000_i128);
 }
 
 #[test]
