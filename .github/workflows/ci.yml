@@ -92,7 +92,16 @@ jobs:
           restore-keys: cargo-${{ runner.os }}-
 
       - name: Build WASM
-        run: cargo build --release --target wasm32v1-none -p prediction_market
+        run: cargo build --release --target wasm32v1-none -p prediction_market -p pulse_token -p leaderboard -p referral_registry
+
+      # Soroban protocol limits contract binaries to 128 KiB (131,072 bytes).
+      # prediction_market.wasm currently builds to ~89.5 KiB with opt-level="z" + LTO.
+      # Enforce a committed 96 KiB (98,304 bytes) budget via scripts/check-wasm-size.sh
+      # so any size regression fails the Build WASM job immediately.
+      - name: Check WASM size budget (96 KiB / 98,304 bytes max)
+        env:
+          WASM_BUDGET_BYTES: "98304"
+        run: bash scripts/check-wasm-size.sh target/wasm32v1-none/release
 
   invariants:
     name: Cross-Contract Invariants
